@@ -69,11 +69,15 @@ contract TradeAlgoTaskManager is
         _setGenerator(_generator);
     }
 
-    function setGenerator(address newGenerator) external onlyOwner {
+    function setGenerator(
+        address newGenerator
+    ) external onlyOwner {
         _setGenerator(newGenerator);
     }
 
-    function setAggregator(address newAggregator) external onlyOwner {
+    function setAggregator(
+        address newAggregator
+    ) external onlyOwner {
         _setAggregator(newAggregator);
     }
 
@@ -106,22 +110,23 @@ contract TradeAlgoTaskManager is
     ) external onlyAggregator {
         uint32 taskIndex = taskResponse.referenceTaskIndex;
         require(
-            keccak256(abi.encode(taskResponse)) == allTaskHashes[taskIndex],
-            "Invalid task response"
+            keccak256(abi.encode(taskResponse)) == allTaskHashes[taskIndex], "Invalid task response"
         );
+        require(allTaskResponses[taskIndex] == bytes32(0), "Task already responded");
         require(
-            allTaskResponses[taskIndex] == bytes32(0),
-            "Task already responded"
-        );
-        require(
-            uint32(block.number) <= taskResponseMetadata.taskRespondedBlock + TASK_RESPONSE_WINDOW_BLOCK,
+            uint32(block.number)
+                <= taskResponseMetadata.taskRespondedBlock + TASK_RESPONSE_WINDOW_BLOCK,
             "Response too late"
         );
 
         bytes32 message = keccak256(abi.encode(taskResponse));
 
-        (QuorumStakeTotals memory quorumStakeTotals, bytes32 hashOfNonSigners) =
-            checkSignatures(message, task.quorumNumbers, uint32(taskResponseMetadata.taskRespondedBlock), nonSignerStakesAndSignature);
+        (QuorumStakeTotals memory quorumStakeTotals, bytes32 hashOfNonSigners) = checkSignatures(
+            message,
+            task.quorumNumbers,
+            uint32(taskResponseMetadata.taskRespondedBlock),
+            nonSignerStakesAndSignature
+        );
 
         for (uint256 i = 0; i < taskResponseMetadata.taskRespondedBlock; i++) {
             require(
@@ -147,25 +152,20 @@ contract TradeAlgoTaskManager is
         BN254.G1Point[] memory pubkeysOfNonSigningOperators
     ) external {
         uint32 referenceTaskIndex = taskResponse.referenceTaskIndex;
+        require(allTaskResponses[referenceTaskIndex] != bytes32(0), "Task not responded");
         require(
-            allTaskResponses[referenceTaskIndex] != bytes32(0),
-            "Task not responded"
-        );
-        require(
-            allTaskResponses[referenceTaskIndex] ==
-                keccak256(abi.encode(taskResponse, taskResponseMetadata)),
+            allTaskResponses[referenceTaskIndex]
+                == keccak256(abi.encode(taskResponse, taskResponseMetadata)),
             "Task response mismatch"
         );
+        require(!taskSuccessfullyChallenged[referenceTaskIndex], "Task already challenged");
         require(
-            !taskSuccessfullyChallenged[referenceTaskIndex],
-            "Task already challenged"
-        );
-        require(
-            uint32(block.number) <= taskResponseMetadata.taskRespondedBlock + TASK_CHALLENGE_WINDOW_BLOCK,
+            uint32(block.number)
+                <= taskResponseMetadata.taskRespondedBlock + TASK_CHALLENGE_WINDOW_BLOCK,
             "Challenge period expired"
         );
 
-        uint256 expectedResult = task.strategyId; 
+        uint256 expectedResult = task.strategyId;
         bool isResponseValid = (expectedResult == taskResponse.calculatedResult);
 
         if (isResponseValid) {
@@ -181,10 +181,7 @@ contract TradeAlgoTaskManager is
 
         bytes32 signatoryRecordHash =
             keccak256(abi.encodePacked(task.taskCreatedBlock, hashesOfNonSigningOperators));
-        require(
-            signatoryRecordHash == taskResponseMetadata.hashOfNonSigners,
-            "Invalid non-signers"
-        );
+        require(signatoryRecordHash == taskResponseMetadata.hashOfNonSigners, "Invalid non-signers");
 
         taskSuccessfullyChallenged[referenceTaskIndex] = true;
         emit TaskChallengedSuccessfully(referenceTaskIndex, msg.sender);
@@ -194,13 +191,17 @@ contract TradeAlgoTaskManager is
         return TASK_RESPONSE_WINDOW_BLOCK;
     }
 
-    function _setGenerator(address newGenerator) internal {
+    function _setGenerator(
+        address newGenerator
+    ) internal {
         address oldGenerator = generator;
         generator = newGenerator;
         emit GeneratorUpdated(oldGenerator, newGenerator);
     }
 
-    function _setAggregator(address newAggregator) internal {
+    function _setAggregator(
+        address newAggregator
+    ) internal {
         address oldAggregator = aggregator;
         aggregator = newAggregator;
         emit AggregatorUpdated(oldAggregator, newAggregator);

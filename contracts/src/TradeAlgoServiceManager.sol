@@ -45,7 +45,9 @@ contract TradeAlgoServiceManager is ServiceManagerBase {
 
     /// @notice Called during challenge resolution to forward a call to the Slasher contract, freezing the `operator`.
     /// @dev The Slasher contract is still under active development, and its interface might change.
-    function freezeOperator(address operatorAddr) external onlyTradeAlgoTaskManager {
+    function freezeOperator(
+        address operatorAddr
+    ) external onlyTradeAlgoTaskManager {
         // slasher.freezeOperator(operatorAddr);
     }
 }

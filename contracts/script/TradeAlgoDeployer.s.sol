@@ -22,10 +22,7 @@ import {IndexRegistry} from "@eigenlayer-middleware/src/IndexRegistry.sol";
 import {StakeRegistry} from "@eigenlayer-middleware/src/StakeRegistry.sol";
 import "@eigenlayer-middleware/src/OperatorStateRetriever.sol";
 import {IRewardsCoordinator} from "@eigenlayer/contracts/interfaces/IRewardsCoordinator.sol";
-import {
-    TradeAlgoServiceManager,
-    IServiceManager
-} from "../src/TradeAlgoServiceManager.sol";
+import {TradeAlgoServiceManager, IServiceManager} from "../src/TradeAlgoServiceManager.sol";
 import {TradeAlgoTaskManager} from "../src/TradeAlgoTaskManager.sol";
 import {ITradeAlgoTaskManager} from "../src/ITradeAlgoTaskManager.sol";
 import "../src/ERC20Mock.sol";
@@ -173,8 +170,7 @@ contract TradeAlgoDeployer is Script, Utils {
             address[] memory pausers = new address[](2);
             pausers[0] = tradeAlgoPauser;
             pausers[1] = tradeAlgoCommunityMultisig;
-            tradeAlgoPauserReg =
-                new PauserRegistry(pausers, tradeAlgoCommunityMultisig);
+            tradeAlgoPauserReg = new PauserRegistry(pausers, tradeAlgoCommunityMultisig);
         }
 
         EmptyContract emptyContract = new EmptyContract();
@@ -346,9 +342,7 @@ contract TradeAlgoDeployer is Script, Utils {
         vm.serializeAddress(deployed_addresses, "erc20Mock", address(erc20Mock));
         vm.serializeAddress(deployed_addresses, "erc20MockStrategy", address(erc20MockStrategy));
         vm.serializeAddress(
-            deployed_addresses,
-            "tradeAlgoServiceManager",
-            address(tradeAlgoServiceManager)
+            deployed_addresses, "tradeAlgoServiceManager", address(tradeAlgoServiceManager)
         );
         vm.serializeAddress(
             deployed_addresses,
@@ -356,9 +350,7 @@ contract TradeAlgoDeployer is Script, Utils {
             address(tradeAlgoServiceManagerImplementation)
         );
         vm.serializeAddress(
-            deployed_addresses,
-            "tradeAlgoTaskManager",
-            address(tradeAlgoTaskManager)
+            deployed_addresses, "tradeAlgoTaskManager", address(tradeAlgoTaskManager)
         );
         vm.serializeAddress(
             deployed_addresses,

@@ -39,7 +39,7 @@ interface ITradeAlgoTaskManager is IBLSSignatureChecker {
         uint32 taskRespondedBlock;
         bytes32 hashOfNonSigners;
     }
-    
+
     // FUNCTIONS
 
     /// @notice Creates a new task for an investor following a subscribed strategy
@@ -59,7 +59,7 @@ interface ITradeAlgoTaskManager is IBLSSignatureChecker {
         TaskResponse calldata taskResponse,
         TaskResponseMetadata calldata taskResponseMetadata,
         uint32 quorumThresholdPercentage,
-        NonSignerStakesAndSignature memory nonSignerStakesAndSignature    
+        NonSignerStakesAndSignature memory nonSignerStakesAndSignature
     ) external;
 
     /// @notice Challenges a task response for potential inaccuracies or fraud
